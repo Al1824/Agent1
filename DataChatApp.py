@@ -249,7 +249,7 @@ if not st.session_state.messages or (st.session_state.messages and st.session_st
 # Display chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        if message["role"] == "assistant1" and isinstance(message["content"], dict):
+        if message["role"] == "assistant" and isinstance(message["content"], dict):
             # Handle new message format with chart image
             content = message["content"]
             st.markdown(content.get('explanation', ''))
@@ -282,7 +282,7 @@ if prompt := st.chat_input("Ask me about your data..."):
         #If no API key, random gibberish response for testing purposes
         messages = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=random.randint(50, 200)))
         
-        with st.chat_message("assistant1"):
+        with st.chat_message("assistant"):
             st.markdown(messages)
             st.session_state.messages.append({ 'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),"role": "assistant1", "content": messages})
     else:
@@ -308,7 +308,7 @@ if prompt := st.chat_input("Ask me about your data..."):
             # Generate response -- which is code and visualization
             
             if selected_schema != {}:
-                with st.chat_message("assistant1"):
+                with st.chat_message("assistant"):
                     with st.spinner("Thinking..."):
                         response = chat.send_message(prompt)
                         #convert response.text to dict
@@ -317,12 +317,13 @@ if prompt := st.chat_input("Ask me about your data..."):
                             st.markdown(response_dict['explanation'])
                         else:
                             st.markdown(response_dict['explanation'])
-                            #st.code(response_dict['code'])
+                            
                         
                         # Execute the code and display chart if code exists
                         chart_image = None
                         if response_dict['code']:
                             try:
+                                st.code(response_dict['code'])
                                 # Execute the code in a safe environment
                                 exec_globals = {}
                                 
@@ -374,7 +375,7 @@ if prompt := st.chat_input("Ask me about your data..."):
                         }
                         st.session_state.messages.append({"role": "assistant1", "content": message_content})
             else:
-                with st.chat_message("assistant1"):
+                with st.chat_message("assistant"):
                     with st.spinner("Thinking..."):
                         response = chat.send_message(prompt)
                         st.markdown(response.text)
