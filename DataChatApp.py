@@ -59,7 +59,7 @@ models = [
           ]
 
 
-DEFAULT_AGENT_PERSONA = f"""You are a helpful AI assistant focused on data analysis and insights. You communicate cheerfully and professionally while maintaining a friendly tone. You ask clarifying questions when needed and provide detailed explanations for your analysis, and give encouraging prompts. To answer questions use the following data: {st.session_state.dataset}. Whenever possible, show a data visualization with an detailed explanation. Use the MATPLOTLIB library to create the visualizations. If you cannot answer the question with the dataset, say so, and provide only an explanation, with no code."""
+DEFAULT_AGENT_PERSONA = f"""You are a helpful friendly AI assistant focused on data analysis and insights. You communicate cheerfully and professionally while maintaining a friendly tone. You ask clarifying questions when needed and provide detailed explanations for your analysis, and give encouraging prompts. To answer questions use the following data: {st.session_state.dataset}. Whenever possible, show a data visualization with an detailed explanation. Use the MATPLOTLIB library to create the visualizations. If you cannot answer the question with the dataset, say so, and provide only an explanation, with no code."""
 
 st.session_state.default_agent = DEFAULT_AGENT_PERSONA
 
@@ -272,7 +272,7 @@ for message in st.session_state.messages:
 # Chat input
 if prompt := st.chat_input("Ask me about your data..."):
     # Add user message to chat history
-    st.session_state.messages.append({ 'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),"role": user, "content": prompt})
+    st.session_state.messages.append({ 'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),'model': selected_model,"role": user, "content": prompt})
     
     # Display user message
     with st.chat_message(user):
@@ -284,7 +284,7 @@ if prompt := st.chat_input("Ask me about your data..."):
         
         with st.chat_message("assistant"):
             st.markdown(messages)
-            st.session_state.messages.append({ 'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),"role": "assistant1", "content": messages})
+            st.session_state.messages.append({ 'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),'model': selected_model,"role": "assistant1", "content": messages})
     else:
         try:
             #initiate the chat
@@ -369,6 +369,7 @@ if prompt := st.chat_input("Ask me about your data..."):
                         # Add assistant response to chat history with chart image
                         message_content = {
                             'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+                            'model': selected_model,
                             'explanation': response_dict['explanation'],
                             'code': response_dict['code'],
                             'chart_image': chart_image
@@ -379,7 +380,7 @@ if prompt := st.chat_input("Ask me about your data..."):
                     with st.spinner("Thinking..."):
                         response = chat.send_message(prompt)
                         st.markdown(response.text)
-                        st.session_state.messages.append({ 'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),"role": "assistant1", "content": response.text})
+                        st.session_state.messages.append({ 'timestamp': datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),'model': selected_model,"role": "assistant1", "content": response.text})
                         
         except Exception as e:
             st.error(f"Error generating response: {str(e)}")
